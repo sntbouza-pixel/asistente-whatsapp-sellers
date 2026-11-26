@@ -1,0 +1,64 @@
+{
+  "name": "FINAL - Aviso de errores",
+  "nodes": [
+    {
+      "id": "9defe4a3-2fd7-5ed1-a6ea-31d05c2bf298",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "48affe3e-5827-5a75-b037-06665fcdd291",
+      "name": "Avisar falla (Gmail)",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "sendTo": "operador@ejemplo.com",
+        "subject": "=⚠️ Falló {{ $json.workflow.name }}",
+        "emailType": "text",
+        "message": "=Nodo que falló: {{ $json.execution.lastNodeExecuted }}\nError: {{ $json.execution.error.message }}\nEjecución: {{ $json.execution.id }} → {{ $json.execution.url }}\n\nEl mensaje original del seller (teléfono y texto) está en esa ejecución, en el nodo Normalizar mensaje. Si el error es de credenciales (401/403), hay que reconectarlas: reintentar no sirve.",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail account"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Avisar falla (Gmail)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false,
+  "id": "finalAvisoError1",
+  "tags": []
+}
